@@ -4,6 +4,60 @@
   
   
   <entry>
+    <title>CloudSek Jan Challenge Writeup</title>
+    <link href="/Blog/2021/01/23/CloudSek-Jan-Challenge-writeup/"/>
+    <url>/Blog/2021/01/23/CloudSek-Jan-Challenge-writeup/</url>
+    
+    <content type="html"><![CDATA[<p>Here is how I solved the CTF Challenge for the month of january from CloudSek.</p><h2 id="CHALLENGE"><a href="#CHALLENGE" class="headerlink" title="CHALLENGE"></a>CHALLENGE</h2><p>The challenge starts with the <a href="http://54.212.122.94:8080/">LINK</a> to a website which contains a contact form.</p><p><img src="CloudSek_CTF_JAN_1.png"> </p><p>On submitting the form we get the message that it is submitted succesfully.</p><p><img src="CloudSek_CTF_JAN_1-2.png"> </p><p>Since there is nothing interesting other than the form on the page lets check the source of the website. The Source of the page contains javascript executing xml.</p><p><img src="CloudSek_CTF_JAN_2.png"></p><p>Now i thought since it is executing xml lets try XXE on this. So i searched for a simplest XXE Payload which can read files. After searching on google for a few min i found this payload.</p><figure class="highlight php"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs PHP"><span class="hljs-meta">&lt;?</span>xml version=<span class="hljs-string">&quot;1.0&quot;</span> encoding=<span class="hljs-string">&quot;ISO-8859-1&quot;</span><span class="hljs-meta">?&gt;</span><br>&lt;!DOCTYPE foo [ &lt;!ELEMENT foo ANY &gt;<br>&lt;!ENTITY xxe SYSTEM <span class="hljs-string">&quot;file:///etc/passwd&quot;</span> &gt;]&gt;<br>&lt;input&gt;<br>    &lt;firstName&gt;&amp;xxe;&lt;/firstName&gt;<br>    &lt;lastName&gt;surname&lt;/lastName&gt;<br>&lt;/input&gt;<br></code></pre></div></td></tr></table></figure><p>Lets fire up Burp Suite and capture a POST request so that we can test our payload. On using the payload on the captured POST request we got a successful response and we also got a username which we can make use of.</p><p><img src="CloudSek_CTF_JAN_3.png"></p><p>Now lets Modify our Payload to find the FLAG.</p><p><img src="CloudSek_CTF_JAN_4.png"></p><blockquote><p> <strong>FLAG</strong>: CLOUDSEKCTF{XxE_Is_5UN}</p></blockquote>]]></content>
+    
+    
+    <categories>
+      
+      <category>Hacking</category>
+      
+      <category>CTF</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>CTF Writeups</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>CloudSek CTF Writeup</title>
+    <link href="/Blog/2020/12/05/CloudSek-CTF-Dec-Writeup/"/>
+    <url>/Blog/2020/12/05/CloudSek-CTF-Dec-Writeup/</url>
+    
+    <content type="html"><![CDATA[<p>Here is how I solved the CTF Challenge from CloudSek. I managed to finsih in the top 10 even though i took 3 hrs to solve this. I learned about PHP Type Juggling from this challenge.</p><h2 id="CHALLENGE"><a href="#CHALLENGE" class="headerlink" title="CHALLENGE"></a>CHALLENGE</h2><p>The challenge starts with the <a href="54.149.247.108">LINK</a> to a website which looks like this:</p><p><img src="CloudSek_CTF_Home.png"> </p><p>Since there is nothing interesting on the page, let’s start haxoring! The first thing to check is for the robots.txt and luckily we got some juicy info.</p><p><img src="CloudSek_CTF_Robots.png"></p><p>On visiting xvigil.php got php script which is taking two inputs hash and xvigil</p><p><img src="CloudSek_CTF_Xvigil.png"></p><p>Lets check getSecret.php out. We got another php script this script is taking two inputs Cl0ud and SEK and then converting the values of these two to md5 and then checking if the md5 values of two variable is equal. If the values are then it will print out the secret.</p><p><img src="CloudSek_CTF_Getsecret.png"></p><p>Now how can two different values have same md5 hash? So I fired up google and searched how can i make two md5 hash equal in php and i found this blog post about [PHP Type Juggling] (<a href="https://www.netsparker.com/blog/web-security/php-type-juggling-vulnerabilities/">https://www.netsparker.com/blog/web-security/php-type-juggling-vulnerabilities/</a>). After reading this post i got to know that there is a vulnerability in php that allows it to evaluate two values of different data types to true if there hash is in the scientific E-notation format. So Passed the values ‘240610708 and ‘QNKCDZO’ to the two variables.<br>We got the secret thanks to php type juggling.</p><p><img src="CloudSek_CTF_Getsecret2.png"></p><p>Now we have to pass the md5 hash of secret and the string in xvigil variable as the value of hash variable in xvigil.php script. For eg: I passed Xvigil = ctf and Hash = 3fb855e61ae87fd72739c50b5dcbd323. Here value of Xvigil can be anything bt the value of hash will be md5 hash of ‘value in Xvigil + Secret’.</p><p><img src="CloudSek_CTF_Hash.png"></p><p>And on doing the above action the php script evaluates to true and we got our flag and the link to google form where we have to submit the flag.</p><p><img src="CloudSek_CTF_Flag.png"></p><blockquote><p> <strong>FLAG</strong>: Cl0uDsEK_cTf{PhP_i$_kInDa_fUnNYy}</p></blockquote>]]></content>
+    
+    
+    <categories>
+      
+      <category>Hacking</category>
+      
+      <category>CTF</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>CTF Writeups</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>A Simple Guide to Setup ADB</title>
     <link href="/Blog/2020/11/21/ADB-Installation-Guide/"/>
     <url>/Blog/2020/11/21/ADB-Installation-Guide/</url>
